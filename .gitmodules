@@ -1,0 +1,3 @@
+[submodule "interpax"]
+	path = interpax
+	url = https://github.com/draneyj/interpax.git
