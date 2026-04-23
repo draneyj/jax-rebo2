@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --job-name=train_rebo       # create a short name for your job
+#SBATCH --nodes=1                # node count
+#SBATCH --mem=128G
+#SBATCH --ntasks=1              # total number of tasks across all nodes. !! Change to 8 for REBO2
+#SBATCH --cpus-per-task=1        # cpu-cores per task (>1 if multi-threaded tasks)
+#SBATCH --time=72:00:00          # total run time limit (HH:MM:SS)
+#SBATCH --gres=gpu:1             # number of GPUs per node
+#SBATCH --account=azp
+
+module purge
+module load anaconda3/2024.10
+# module load cudatoolkit/12.6
+module load openmpi/gcc/4.1.6
+conda activate jaxmd
+export XLA_PYTHON_CLIENT_PREALLOCATE=false
+export XLA_PYTHON_CLIENT_MEM_FRACTION=.97
+# export XLA_FLAGS="--xla_gpu_enable_command_buffer="
+# python optimize_potential.py -lr 1e-5 -o all_5_reg2p1 -rw 1e1 -p params/og_cc_and_manual_pair_params.pkl
+# python optimize_potential.py -lr 1e-2 -o all_2_reg2p0 -rw 1.0 -p params/og_cc_and_manual_pair_params.pkl
+# python optimize_potential.py -lr 1e-5 -o all_5_reg2n1L -rw 1e-1 -p params/og_cc_and_manual_pair_params_long.pkl
+# python optimize_potential.py -lr 1e-03 -o all_3_reg2p0L -rw 1.0 -p params/og_cc_and_manual_pair_params_long.pkl
+# python optimize_potential.py -lr 1e-05 -o tune_5_regn1 -rw 1e-1 -p params/all_4_reg2p0_69_params.pkl
+
+# python optimize_potential3.py -lr 1e-04 -o H_4_r1 -rw 1.0 -p params/og_cc_and_manual_pair_params.pkl
+python optimize_potential3.py -lr 1e-03 -o H_3_r1 -rw 1.0 -p params/og_cc_and_manual_pair_params.pkl

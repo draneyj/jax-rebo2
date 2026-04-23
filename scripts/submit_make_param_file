@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name=write_rebo       # create a short name for your job
+#SBATCH --nodes=1                # node count
+#SBATCH --mem=8G
+#SBATCH --ntasks=1              # total number of tasks across all nodes. !! Change to 8 for REBO2
+#SBATCH --cpus-per-task=1        # cpu-cores per task (>1 if multi-threaded tasks)
+#SBATCH --time=6:00:00          # total run time limit (HH:MM:SS)
+#SBATCH --account=dgraves
+
+module purge
+module load anaconda3/2024.10
+# module load cudatoolkit/12.6
+module load openmpi/gcc/4.1.6
+conda activate jaxmd
+# export XLA_PYTHON_CLIENT_PREALLOCATE=false
+# export XLA_PYTHON_CLIENT_MEM_FRACTION=.97
+# export XLA_FLAGS="--xla_gpu_enable_command_buffer="
+
+# fname=all_5_reg2_12
+# python write_param_file.py -p params/${fname}_params.pkl -o CH.rebo3_${fname}
+# cp CH.rebo3_${fname} $SCRATCH/Hlammps/rebo3/lata/.
+shopt -s extglob nullglob
+
+for prefix in H_3_r1; do 
+    fname=$(ls -t params/${prefix}_+([0-9])_params.pkl | head -1)
+    python write_param_file.py -p ${fname} -o CH.rebo3_${prefix}_latest
+done
+
+# python write_param_file.py -p params/H_3_final_params.pkl -o CH.rebo3_H_3_final_params_TEST
